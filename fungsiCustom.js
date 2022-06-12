@@ -16,7 +16,7 @@ let modifyFile3 = (val) => {
   file3 = val;
 };
 
-/ TODO: Kerjakan bacaData
+// TODO: Kerjakan bacaData
 // gunakan variabel file1, file2, dan file3
 const bacaData = (fnCallback) => {
   // Siapkan array wadah hasil data parsing dan data splitting
