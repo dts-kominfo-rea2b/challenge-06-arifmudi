@@ -19,42 +19,52 @@ let modifyFile3 = (val) => {
 // TODO: Kerjakan bacaData
 // gunakan variabel file1, file2, dan file3
 const bacaData = (fnCallback) => {
-  // Siapkan array wadah hasil data parsing dan data splitting
-  const splittedArr = [];
+  let dataresult = [];
 
-  // Baca file 1
-  fs.readFile(file1, 'utf-8', (err, data) => {
-    if (err) {
-      console.log(`Error :` + err);
-    }
-    let parsedData = JSON.parse(data);
-    splittedArr.push(parsedData.message.split(' ')[1]);
-
-    // Baca file 2
-    fs.readFile(file2, 'utf-8', (err, data) => {
+  const readingFile1 = (callback, nextStep) => {
+    fs.readFile(file1, (err, data) => {
       if (err) {
-        console.log(`Error :` + err);
+        callback(err, dataresult)
+        return
       }
-      let parsedData = JSON.parse(data);
-      splittedArr.push(parsedData[0].message.split(' ')[1]);
-
-      // Baca file 3
-      fs.readFile(file3, 'utf-8', (err, data) => {
-        if (err) {
-          console.log(`Error :` + err);
-        }
-        let parsedData = JSON.parse(data);
-        splittedArr.push(parsedData[0]['data'].message.split(' ')[1]);
-
-        // Cek hasil (seharusnya splittedArr udah keisi hasil data splitting)
-        console.log(splittedArr);
-
-        // Callback hasil akhir
-        fnCallback(err, splittedArr)
-      })
+      const temp = JSON.parse(data)
+      dataresult.push(temp.message.split(' ')[1]);
+      nextStep(callback);
+    });
+  }
+  const readingFile2 = (callback, nextStep) => {
+    fs.readFile(file2, (err, data) => {
+      if (err) {
+        callback(err, dataresult)
+        return
+      }
+      const temp = JSON.parse(data)
+      if (temp.length > 0) {
+        dataresult.push(temp[0].message.split(' ')[1]);
+      };
+      nextStep(callback);
+    });
+  }
+  const readingFile3 = (callback) => {
+    fs.readFile(file3, (err, data) => {
+      if (err) {
+        callback(err, dataresult)
+        return
+      }
+      const temp = JSON.parse(data)
+      if (temp.length > 0) {
+        dataresult.push(temp[0].data.message.split(' ')[1]);
+      }
+      callback(null, dataresult);
+    });
+  }
+  readingFile1(fnCallback, (callback1) => {
+    readingFile2(callback1, (callback2) => {
+      readingFile3(callback2)
     })
   })
-}
+
+};
 
 // ! JANGAN DIMODIFIKASI
 module.exports = {
