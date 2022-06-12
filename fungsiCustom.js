@@ -16,32 +16,45 @@ let modifyFile3 = (val) => {
   file3 = val;
 };
 
-// TODO: Kerjakan bacaData
+/ TODO: Kerjakan bacaData
 // gunakan variabel file1, file2, dan file3
 const bacaData = (fnCallback) => {
-  let index1 = "";
-  let index2 = "";
-  let index3 = "";
-  let temp = [];
+  // Siapkan array wadah hasil data parsing dan data splitting
+  const splittedArr = [];
 
-  fs.readFile(file1, 'utf-8', (err, data1) => {
-    fs.readFile(file2, 'utf-8', (err, data2) => {
-      fs.readFile(file3, 'utf-8', (err, data3) => {
-        data = [
-          index1 = JSON.parse(data1)['message'].split(" ")[1],
-          index2 = JSON.parse(data2)[0]['message'].split(" ")[1],
-          index3 = JSON.parse(data3)[0]['data']['message'].split(" ")[1]
-        ];
+  // Baca file 1
+  fs.readFile(file1, 'utf-8', (err, data) => {
+    if (err) {
+      console.log(`Error :` + err);
+    }
+    let parsedData = JSON.parse(data);
+    splittedArr.push(parsedData.message.split(' ')[1]);
 
-        temp.push(index1);
-        temp.push(index2);
-        temp.push(index3);
+    // Baca file 2
+    fs.readFile(file2, 'utf-8', (err, data) => {
+      if (err) {
+        console.log(`Error :` + err);
+      }
+      let parsedData = JSON.parse(data);
+      splittedArr.push(parsedData[0].message.split(' ')[1]);
 
-        fnCallback(err, temp);
-      });
-    });
-  });
-};
+      // Baca file 3
+      fs.readFile(file3, 'utf-8', (err, data) => {
+        if (err) {
+          console.log(`Error :` + err);
+        }
+        let parsedData = JSON.parse(data);
+        splittedArr.push(parsedData[0]['data'].message.split(' ')[1]);
+
+        // Cek hasil (seharusnya splittedArr udah keisi hasil data splitting)
+        console.log(splittedArr);
+
+        // Callback hasil akhir
+        fnCallback(err, splittedArr)
+      })
+    })
+  })
+}
 
 // ! JANGAN DIMODIFIKASI
 module.exports = {
