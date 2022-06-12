@@ -1,4 +1,5 @@
 // TODO: import module bila dibutuhkan di sini
+const fs = require("fs");
 
 // ! JANGAN DIMODIFIKASI
 let file1 = "./data1.json";
@@ -19,51 +20,32 @@ let modifyFile3 = (val) => {
 // TODO: Kerjakan bacaData
 // gunakan variabel file1, file2, dan file3
 const bacaData = (fnCallback) => {
-  let dataresult = [];
-
-  const readingFile1 = (callback, nextStep) => {
-    fs.readFile(file1, (err, data) => {
-      if (err) {
-        callback(err, dataresult)
-        return
-      }
-      const temp = JSON.parse(data)
-      dataresult.push(temp.message.split(' ')[1]);
-      nextStep(callback);
-    });
+  let data = [];
+  let counter = 0;
+  let callback = () => {
+    counter++;
+    if (counter === 3) {
+      fnCallback(null, data);
+    }
   }
-  const readingFile2 = (callback, nextStep) => {
-    fs.readFile(file2, (err, data) => {
-      if (err) {
-        callback(err, dataresult)
-        return
-      }
-      const temp = JSON.parse(data)
-      if (temp.length > 0) {
-        dataresult.push(temp[0].message.split(' ')[1]);
-      };
-      nextStep(callback);
-    });
+  fs.readFile(file1, (err, data1) => {
+    if (err) return fnCallback(err);
+    data.push(JSON.parse(data1).message.split(' ')[1]);
+    callback();
   }
-  const readingFile3 = (callback) => {
-    fs.readFile(file3, (err, data) => {
-      if (err) {
-        callback(err, dataresult)
-        return
-      }
-      const temp = JSON.parse(data)
-      if (temp.length > 0) {
-        dataresult.push(temp[0].data.message.split(' ')[1]);
-      }
-      callback(null, dataresult);
-    });
+  );
+  fs.readFile(file2, (err, data2) => {
+    if (err) return fnCallback(err);
+    data.push(JSON.parse(data2)[0].message.split(' ')[1]);
+    callback();
   }
-  readingFile1(fnCallback, (callback1) => {
-    readingFile2(callback1, (callback2) => {
-      readingFile3(callback2)
-    })
-  })
-
+  );
+  fs.readFile(file3, (err, data3) => {
+    if (err) return fnCallback(err);
+    data.push(JSON.parse(data3)[0].data.message.split(' ')[1]);
+    callback();
+  }
+  );
 };
 
 // ! JANGAN DIMODIFIKASI
